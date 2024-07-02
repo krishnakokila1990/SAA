@@ -401,22 +401,19 @@ Migration and Transfer:
     
     ![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/828628b0-1eef-4484-89d0-6a7315cad598/4a7b1232-088a-4024-82d3-24aba19e5db0/e95ec952-c756-4cfd-b2fb-7457dfcb8f0b.png)
     
-- AWS
-Migration Hub
+- AWS Migration Hub
+    - AWS Migration Hub (Migration Hub) **provides a single place to discover your existing servers, plan migrations, and track the status of each application migration**. The Migration Hub provides visibility into your application portfolio and streamlines planning and tracking
+- AWS Snow Family
+    - AWS Snow Family is a service for customers who want to transport terabytes or petabytes of data to and from AWS, or who want to access the storage and compute power of the AWS Cloud locally and cost effectively in places where connecting to the internet might not be an option
+    - **AWS Snowcone, AWS Snowball, and AWS Snowmobile**
+- AWS Transfer Family
+    - AWS Transfer Family **securely scales your recurring business-to-business file transfers to AWS Storage services using SFTP, FTPS, FTP, and AS2 protocols**. Seamlessly migrate, automate, and monitor your file transfer workflows into and out of Amazon S3 and Amazon EFS using the SFTP, FTPS, and FTP protocols
+    - AWS Transfer Family is a secure transfer service that stores your data in Amazon Simple Storage Service or Amazon Elastic File System and simplifies the migration of Secure File Transfer Protocol (SFTP), File Transfer Protocol Secure (FTPS), File Transfer Protocol (FTP), and Applicability Statement 2 (AS2) workflows to AWS
 
-Version
-1.1 SAA-C03 19 | PAGE
+Networking and Content Delivery:
 
-- AWS
-Snow Family
-- AWS
-Transfer Family
-
-Networking
-and Content Delivery:
-
-- AWS
-Client VPN
+- AWS Client VPN
+    - AWS Client VPN **provides users with secure access to applications both on premises and in AWS**. This is helpful during a cloud migration when applications move from on-premises locations to the cloud. With AWS Client VPN, users don't have to change the way they access their applications during or after migration
 - Amazon CloudFront
     - web service that gives businesses and web application developers an easy and cost-effective way to distribute content with low latency and high data transfer speeds.
     - CloudFront supports wildcard CNAME, wildcard SSL certificates, Dedicated IP, Custom SSL and SNI Custom SSL (cheaper)
@@ -439,7 +436,6 @@ Client VPN
     - Forward only the query string parameters for which your origin will return unique objects.
     - Configure CloudFront to forward only specified cookies instead of forwarding all cookies.
     - Configure CloudFront to forward and cache based on only specified headers instead of forwarding and caching based on all headers.
-    - 
 - AWS Direct Connect
     - network service that provides an alternative to using the Internet to connect a customer’s on-premises sites to AWS.
     - Data is transmitted through a private network connection between AWS and a customer’s datacenter or corporate network
@@ -465,15 +461,14 @@ Client VPN
     
     ![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/828628b0-1eef-4484-89d0-6a7315cad598/e0648773-fe0c-44e4-b3f4-e8ff3d615c62/45e5743b-2e5c-40b8-92cc-dc3b83e67c64.png)
     
-- Elastic
-Load Balancing (ELB)
+- Elastic Load Balancing (ELB)
 - AWS Global Accelerator
     - The addresses are assigned to your accelerator for as long as it exists, even if you disable the accelerator and it no longer accepts or routes traffic.
     - Does health checks for TCP only – not UDP.
     - By default, AWS Global Accelerator is protected by AWS Shield Standard, which minimizes application downtime and latency from denial-of-service attacks by using always-on network flow monitoring and automated in-line mitigation.
     - You can also enable AWS Shield Advanced for automated resource-specific enhanced detection and mitigation, as well as 24×7 access to the AWS DDoS Response Team (DRT) for manual mitigations of sophisticated DDoS attacks.
-- AWS
-PrivateLink
+- AWS PrivateLink
+    - AWS PrivateLink **provides private connectivity between virtual private clouds (VPCs), supported AWS services, and your on-premises networks without exposing your traffic to the public internet**
 - Amazon Route 53
     - Offers
         - Domain name registry.
@@ -502,10 +497,10 @@ PrivateLink
         - **CLOUDWATCH_METRIC**: The health check is associated with a CloudWatch alarm. If the state of the alarm is OK, the health check is considered healthy. If the state is ALARM, the health check is considered unhealthy. If CloudWatch doesn’t have sufficient data to determine whether the state is OK or ALARM, the health check status depends on the setting for InsufficientDataHealthStatus: Healthy, Unhealthy, or LastKnownStatus.
         - **CALCULATED**: For health checks that monitor the status of other health checks, Route 53 adds up the number of health checks that Route 53 health checkers consider to be healthy and compares that number with the value of HealthThreshold.
     - 
-- AWS
-Site-to-Site VPN
-- AWS
-Transit Gateway
+- AWS Site-to-Site VPN
+    - AWS Site-to-Site VPN is **a fully-managed service that creates a secure connection between your data center or branch office and your AWS resources using IP Security (IPSec) tunnels**
+- AWS Transit Gateway
+    - AWS Transit Gateway **connects your Amazon Virtual Private Clouds (VPCs) and on-premises networks through a central hub**. This connection simplifies your network and puts an end to complex peering relationships. Transit Gateway acts as a highly scalable cloud router—each new connection is made only once
 - Amazon VPC
     - Components of a VPC:
         - **A Virtual Private Cloud:** A logically isolated virtual network in the AWS cloud. You define a VPC’s IP address space from ranges you select.
@@ -648,13 +643,12 @@ Transit Gateway
         - DHCP traffic.
         - Traffic to the reserved IP address for the default VPC router.
 
-Security,
-Identity, and Compliance:
+Security, Identity, and Compliance:
 
-- AWS
-Artifact
-- AWS
-Audit Manager
+- AWS Artifact
+    - AWS Artifact is **a web service that enables you to download AWS security and compliance documents such as ISO certifications and SOC reports**
+- AWS Audit Manager
+    - AWS Audit Manager **helps you continuously audit your AWS usage to simplify how you assess risk and compliance with regulations and industry standards**. Audit Manager automates evidence collection to make it easier to assess if your policies, procedures, and activities, also known as controls, are operating effectively
 - AWS Certificate Manager (ACM)
     - Create, store, and renew SSL/TLS X.509 certificates
     - **Public certificates** are signed by the AWS public Certificate Authority.
@@ -672,16 +666,17 @@ Audit Manager
         - User pools are user directories that provide sign-up and sign-in options for your app users.
         - Identity pools enable you to grant your users access to other AWS services.
     - Amazon Cognito Sync is an AWS service and client library that enables cross-device syncing of application-related user data.
-- Amazon
-Detective
-- AWS
-Directory Service
-- AWS
-Firewall Manager
+- Amazon Detective
+    - Amazon Detective **helps you analyze, investigate, and quickly identify the root cause of security findings or suspicious activities**. Detective automatically collects log data from your AWS resources
+- AWS Directory Service
+    - AWS Directory Service **provides multiple directory choices for customers who want to use existing Microsoft AD or Lightweight Directory Access Protocol (LDAP)–aware applications in the cloud**. It also offers those same choices to developers who need a directory to manage users, groups, devices, and access
+- AWS Firewall Manager
+    - AWS Firewall Manager is **a security management service which allows you to centrally configure and manage firewall rules across your accounts and applications in AWS Organization**
 - Amazon GuardDuty
     - Intelligent threat detection service.
-- AWS IAM
-Identity Center (AWS Single Sign-On)
+- AWS IAM Identity Center (AWS Single Sign-On)
+    - It is **a single place where you can assign your workforce users, also known as workforce identities, consistent access to multiple AWS accounts and applications**. IAM Identity Center is offered at no additional charge
+    - **IAM Identity Center is not a Principal like IAM Users and Roles**. Instead it's a way to connect a human user to a Role, which can then be used to access the AWS console or services via the cli or sdk. The users that are managed in IAM Identity Center are not IAM Users
 - AWS Identity and Access Management (IAM)
     - By default, all requests are implicitly denied.
     - An explicit allow in an identity-based or resource-based policy overrides this default.
@@ -716,16 +711,17 @@ Identity Center (AWS Single Sign-On)
     - generate-data-key-without-plaintext
     - **KMS Envelope Encryption - KMS generates data keys which are used to encrypt data and are themselves encrypted using your master keys in KMS**
     - 1000 KMS keys per account per region.
-- Amazon
-Macie
-- AWS
-Network Firewall
+- Amazon Macie
+    - Amazon Macie is a data security service that discovers sensitive data using machine learning and pattern matching, provides visibility into data security risks, and enables automated protection against those risks
+- AWS Network Firewall
+    - AWS Network Firewall (ANF) **provides the customer deep packet inspection (DPI), application protocol detection, domain name filtering, and intrusion prevention system (IPS)**
 - AWS Resource Access Manager (AWS RAM)
     - AWS Resource Access Manager (RAM) is a service that enables you to share AWS resources easily and securely with any AWS account or within your AWS Organization.
 - AWS Secrets Manager
     - 
-- AWS
-Security Hub
+- AWS Security Hub
+    - AWS Security Hub is a cloud security posture management (CSPM) service that performs automated, continuous security best practice checks against your AWS resources to help you identify misconfigurations, and aggregates your security alerts (i.e. findings) in a standardized format so that you can more easily enrich, investigate, and remediate them
+    - **AWS Security Hub provides a broader view of security and compliance across your AWS accounts, while Amazon GuardDuty focuses on threat detection within your AWS environment**
 - AWS Shield
     - AWS Shield provides expanded DDoS attack protection for your AWS resources. Get 24/7 support from our DDoS response team and detailed visibility into DDoS events.
     - two tiers of AWS Shield – Standard and Advanced.
@@ -736,10 +732,9 @@ Security Hub
 
 Serverless:
 
-- AWS
-AppSync
-- AWS
-Fargate
+- AWS AppSync
+    - AWS AppSync **enables developers to connect their applications and services to data and events with secure, serverless and high-performing GraphQL and Pub/Sub APIs**. You can do the following with AWS AppSync: Access data from one or more data sources from a single GraphQL API endpoint
+- AWS Fargate
 - AWS Lambda
     
     Services that Lambda reads events from:
@@ -818,7 +813,5 @@ Storage:
 Understand all gateways
 
 NAT
-
 Virtual
-
 Direct Connection
