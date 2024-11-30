@@ -1,0 +1,481 @@
+Services
+
+RDS
+    - Supported
+        
+        Postgres, MYSQL, MariaDB, Oracle, SQL Server, Aurora
+        
+        Oracle does not support IAM Auth
+        
+    - You cannot SSH into RDS - except for custom
+    - Advantages —> Auto Scaling, Maximum Storage limit
+        
+        Auto Modify if —> 10% less than or low storage and 6 hours have passed since last modification
+        
+    - RDS — Replica and AZ
+        
+        **5 read Replicas —> within AZ, Cross AZ or Cross region**
+        
+        RDS Replicas are Async Replication i.e Eventually consistent
+        
+        Cost when data goes from one AZ to another
+        
+        Multi-AZ is DR - Can setup read replica as Multi-AZ
+        
+        Single AZ —> Multi-AZ ——- Just modify and enable Multi-AZ —— Q? Does it increase CPU utilization? Downtime?
+        
+        Steps:
+        
+        1. Snapshot will be taken
+        2. New DB is restored from this
+        3. Sync between old and New after this
+    - Aurora
+        
+        **Built on EC2**
+        
+        **limit 128 TB**
+        
+        **15 replicas with sub 10ms latency**
+        
+        **6 copies across 3 AZ**
+        
+        **One master and failover within 3 secs**
+        
+        **Load balancing happens at connection level**
+        
+        **Backtrack option to restore data**
+        
+        **Connect via endpoints of clusters**
+        
+        **Encryption - AWS KMS - at rest**
+        
+    - Oracle DB does not support IAM authentication
+
+Cloud Formation
+    - With cloud formation, you can create with exact order and configuration
+    
+    Security Group
+    
+    EC2
+    
+    Elastic IPs for these EC2
+    
+    S3 Bucket
+    
+    ELB
+    
+- Each stack has an identifier that can be used to identify costs
+- Templates have to be uploaded to S3 and then referenced in cloud formation
+- Can't edit a template - upload a new version
+- Deleting a stack deletes every single artifact that was created using CF
+- CF  - blocks
+    
+    Resources - like EC2/LB etc
+    
+    Parameters
+    
+    Mappings
+    
+    Outputs - like export, etc
+    
+    conditions
+    
+    Metadata
+    
+- YAML
+    
+    Multi-line strings - Separator is ‘|’
+    
+    for Lists we use ‘-’
+    
+- Resources
+    
+    Can reference each other
+    
+    **close to 224 types of resources -** https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-reference.html
+    
+    Syntax - AWS::product name::data-type-name or `*service-provider*`::`*service-name*`::`*data-type-name*`
+    
+    **I can't create a dynamic amount of resources**
+    
+- Parameters
+    
+    **use  “!Ref” to use a parameter**
+    
+    Pseudo Parameters
+    
+    like Account id, stack id, stack name, etc
+    
+    use when they are user-specific
+    
+- Mappings
+    
+    Fixed variables to differentiate between regions - Hardcoded
+    
+    use mappings when we know all the values like Account id, stack id, stack name
+    
+- Outputs
+    
+    When we export we can use in different CF like VPC ID and Subnet ID
+    
+    to link different CFs
+    
+    Cant delete stack if outputs are referenced
+    
+    Usage is — “!ImportValue”
+    
+- Conditions
+    
+    logical statements like if region etc
+    
+    Conditions can be applied to resources / outputs / etc…
+    
+    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/21a0ef26-f075-4a45-83a5-0394a1dd4226/Untitled.png)
+    
+    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2118fa52-e772-452e-a34d-4d76c864b73e/Untitled.png)
+    
+- **Intrinsic Functions**
+    
+    **Fn::Ref**
+    
+    **Parameters - Value of Parameters**
+    
+    **Resources - Returns Physical ID**
+    
+    **Fn::GetAtt — returns the value of an attribute from a resource in the template**
+    
+    **!GetAtt Ec2Instance.AvailabilityZone**
+    
+    **Fn::FindinMap — return a named value from a specific key**
+    
+    **!FindInMap [ MapName, TopLevelKey, SecondLevelKey ]**
+    
+    **Fn::ImportValue - Import values that are exported in other templates**
+    
+    **Fn::Join — Join values with delimiter**
+    
+    **!Join [Delimiter,[values]]**
+    
+    **Fn::Sub — Substitute values with strings**
+    
+    **Conditions — adding a condition**
+    
+- Rollback
+    - Creation — Default - Everything rolls back
+    - Update - rolls back to the last working state
+- Change Sets
+    - Shows us a view of what would happen when we update a stack
+- Nested Stacks
+    - Part of other stacks
+    - isolate repeated tasks
+- Cross Stacks
+    - For different life cycles
+- Stack Sets
+    - Create/update/delete stacks across multiple accounts/regions
+    - Need admin account
+- Cloud Formation Drifts
+    - used to detect Manual changes to the automated stack
+
+
+Containers
+
+  - **EFS volume can be shared between different EC2 instances and different ECS Tasks. It can be used as a persistent multi-AZ shared storage for your containers.**
+  - **You have a Classic ECS cluster that you want to enable IAM roles for your ECS tasks so that they can make API requests to AWS services. Which ECS configuration option should you enable in etc/ecs/ecs.config? ECS_ENABLE_TASK_IAM_ROLE**
+  - **ALB + ECS - Run multiple copies of the same application on the same EC2 instance and expose it with a load balancer. The application is available as a Docker image.**
+  - To enable a random host port, set host port = 0 (or empty), which allows multiple containers of the same type to launch on the same EC2 container instance.
+  - Task Definitions are metadata in JSON form to tell ECS how to run a docker container
+      - Max of 10 containers per TD
+  - Dynamic Host Port Mapping — The ALB finds the right port on your EC2 Instances
+      - You must allow on the EC2 instance’s Security Group any port from the ALB’s Security Group
+  - Only IAM role per Task Definition
+  - **ECS Task Placement Strategies**
+      - **BinPack - Cost Saving as it first uses available EC2 instances and fills them up**
+      - **Random**
+      - **Spread - Spread based on the value**
+          - **Spread on ECS AZ - Across AZ**
+              - **attribute:ecs.availability-zone - High availability**
+  - **ECS Task Placement Strategies**
+      - **distinctinstance - place on a different container instance**
+      - **memberof - places task which satisfy an expression. uses a cluster query language**
+          - **attribute:ecs.instance-type =~ t2.***
+  - ECR - Elastic Container Registry
+      - Store and Manage docker images
+      - Backed by S3
+      - Access is by IAM policy
+      - Public and Private
+  - Commands
+      - Login - aws ecr get-login-password --region region | docker login --username AWS
+      --password-stdin aws_account_id.dkr.ecr.region.amazonaws.com
+      - Push
+          - docker push aws_account_id.dkr.ecr.region.amazonaws.com/demo:latest
+      - Pull
+          - docker pull aws_account_id.dkr.ecr.region.amazonaws.com/demo:latest
+  - EKS - Elastic Kubernetes Service
+      - Supports EC2 and Fargate mode
+      - Cloud Agnostic - Independent
+      - Node Types
+          - Managed Node groups
+          - Self Managed
+          - AWS Fargate
+      - Data Volumes
+          - Need to specify storage class manifest on cluster
+          - has COntainer Storage Interface(CSI) compliant driver
+              - EBS
+              - EFS - Works with Fargate
+              - FSx - Lustre
+              - FSx - NetApp ONTAP
+
+Storage:
+
+# **S3**
+
+- Moving between storage classes using lifecycle rules
+- Enable S3 versioning so that deleted items have Deleted Marker on them and can be recovered
+- S3 analytics will give you recommendations for moving between classes - IA and non-IA but not glacier
+- Event notifications
+    - Like created/removed/replication etc
+    - Can now integrate with Amazon EventBridge
+- Encryption
+    - SSE
+        - With Amazon S3 Managed keys - enabled by default for new buckets and objects— SSE-S3
+            - Server-side encryption
+            - AES-256 - so must use header “x-amz-server-side-encryption”:”AES256”
+        - KMS keys stored in AWS KMS — SSE KMS
+            - KMS Service
+            - User control + Audit
+            - must use the header “x-amz-server-side-encryption”:”aws:kms”
+            - counts against KMS quota based on region
+        - Customer provided Keys — SSE-C
+            - S3 does not store this
+            - the key must be provided in the HTTP header
+    - Client Side encryption
+    - In-flight — SSL/TLS
+        - HTTP - non-encrypted
+        - HTTPS - in flight — mandatory for SSE-C
+- Bucket policies are evaluated before default encryption
+- CORS Headers - Cross-Origin Resource Sharing
+    - Same Origin - protocol + host + port
+- Pre-Signed URLS - Inherits permissions of the user generating the pre-signed URL
+    - S3 console - 720 mins
+    - CLI - default 3600, max - 168 hours
+    - examples:
+        - Used for premium users to download content
+- Access Points
+    - Like Grant access via prefix or VPC etc
+    - has its own DNS and Access point policy
+- S3 object Lamda
+    - to change an object just before the caller app retrieves it like analytics etc
+- S3 object lock
+    - Compliance - no one can delete. not even can. Cant change retention time etc
+    - Governance - Spl permissions to delete. need to add retention time
+    - Retention Period - Fixed period
+    - Legal Hold - indefinitely. Can be done by IAM permission
+- EC2 Instances limit: **Users can currently attach a maximum of 16 instances per EBS volume**
+- EFA is a network interface built for HPC and ML applications, and it also leverages the SRD protocol. EFA requires a different network programming model, which uses the LibFabric interface to pass communication to the ENI. 
+Unlike EFA, ENA Express helps you run your application transparently on TCP and UDP. Additionally, ENA Express allows for intra-Availability Zone (AZ) communication, while EFA is currently limited to communication within the same subnet.
+
+LoadBalancers:
+
+ELB
+
+- Managed load balancer taken care by AWS
+- Integrated well with other AWS services
+- 4 types
+    - CLB — Classic — HTTP/HTTPS/TCP/SSL - Deprecated
+    - ALB - HTTP/S and web socket
+    - NLB - TCP, TLS(Secure TCP) and UDP
+    - GLB - Gateway LB - IP Protocol
+- Security
+    - Users can access LB anywhere with HTTP/S
+    - only LB can access EC2
+        
+        by using attaching security groups of LB to EC2
+        
+- ALB v2
+    - LB to multiple apps to multiple machines/ same machines
+    - ALBs can route traffic to different Target Groups based on URL Path, Hostname, HTTP Headers, and Query Strings.
+    - Routing tables
+        - Routing based on the path in the URL
+        - Routing based on hostname
+        - Routing based on Query String
+    - Classic load balancer if used would need multiple CLB per app
+    - what can be target groups
+        - EC2
+        - ECS
+        - Lambda functions
+        - front to IP addresses
+    - Fixed hostname
+    - ALBs can route traffic to different Target Groups based on URL Path, Hostname, HTTP Headers, and Query Strings.
+    - servers cant see IP of the client. instead will be in X-Forwarded-For
+- NLB - Layer 4
+    - TCP and UDP traffic
+    - 100ms latency( 400ms for ALB)
+    - only one static IP per AZ - supports elastic IP
+    - What can be target groups
+        - EC2
+        - IP addresses - Must be private IPs
+        - ALB
+- GWLB
+    - Layer 3 - Network layer - IP packets
+    - 3rd party network virtual apps
+    - Firewall or IDPS (Intrusion Detection and Prevention), payload manipulation etc
+    - Need to modify route tables to divert traffic to GWLB
+    - Transparent network GW —> LB
+    - use GENEVE protocol on 6081
+    - What can be target groups
+        - EC2
+        - IP addresses - Must be private IPs
+- Sticky sessions
+    - can use Cookie to implement stickiness so we can make a client request to always hit the same instance behind LB
+    - for CLB and ALB
+    - App-based cookie
+        - Custom cookie
+            - Cant use names as AWSALB, AWSALBAPP, AWSABLTG
+        - App cookie
+            - name is AWSALBAPP
+    - Duration based cookie
+        - name is AWSALB for ALB
+- Cross zone LB
+    - distributes the load across zones
+    - for ALB
+        - enabled by default
+        - no charges for inter AZ
+    - NLB
+        - disabled by default
+        - charges for inter AZ in enabled
+    - Without Cross Zone
+        - directs to only instances in that instance/zone
+- SSL/TLS
+    - LB uses X.509 certificates
+- Connection draining / De-registration delay
+- **Network Load Balancer provides both static DNS name and static IP. While Application Load Balancer provides a static DNS name but it does NOT provide a static IP. The reason is that AWS wants your Elastic Load Balancer to be accessible using a static endpoint, even if the underlying infrastructure that AWS manages changes.**
+- **Registered targets in a Target Groups for an Application Load Balancer cannot be Network Load Balancer**
+- Network Load Balancer has one static IP address per AZ and you can attach an Elastic IP address to it. Application Load Balancers and Classic Load Balancers have a static DNS name.
+- Server Name Indication(SNI) in Application Load Balancers and Network Load Balancers allows you to load multiple SSL certificates on one listener
+- Server Name Indication (SNI) allows you to expose multiple HTTPS applications each with its own SSL certificate on the same listener. Read more here: https://aws.amazon.com/blogs/aws/new-application-load-balancer-sni/
+- Classic Load Balancer (v1)
+• Support only one SSL certificate
+• Must use multiple CLB for multiple hostnames with multiple SSL certificates
+- Application Load Balancer (v2)
+• Supports multiple listeners with multiple SSL certificates
+• Uses Server Name Indication (SNI) to make it work
+- Network Load Balancer (v2)
+• Supports multiple listeners with multiple SSL certificates
+• Uses Server Name Indication (SNI) to make it work
+
+EC2
+- Security group for accessing EC2 which would have rules
+    - inbound and outbound
+- Security groups are acting as a “firewall” on EC2 instances
+• They regulate:
+• Access to Ports
+• Authorised IP ranges – IPv4 and IPv6
+• Control of inbound network (from other to the instance)
+• Control of the outbound network (from one instance to another)
+- Security Groups Good to know
+• Can be attached to multiple instances
+• Locked down to a region / VPC combination
+• Does live “outside” the EC2 – if traffic is blocked the EC2 instance won’t see it
+• It’s good to maintain one separate security group for SSH access
+• If your application is not accessible (time out), then it’s a security group issue
+• If your application gives a “connection refused“ error, then it’s an application
+error or it’s not launched
+• All inbound traffic is blocked by default
+• All outbound traffic is authorized by default
+- Classic Ports to know
+• 22 = SSH (Secure Shell) - log into a Linux instance
+• 21 = FTP (File Transfer Protocol) – upload files into a file share
+• 22 = SFTP (Secure File Transfer Protocol) – upload files using SSH
+• 80 = HTTP – access unsecured websites
+• 443 = HTTPS – access secured websites
+• 3389 = RDP (Remote Desktop Protocol) – log into a Windows instance
+- EC2 Types
+    - Compute Optimized EC2 instances are great for compute-intensive workloads requiring high-performance processors (e.g., batch processing, media transcoding, high-performance computing, scientific modeling & machine learning, and dedicated gaming servers).
+    - Memory Optimized EC2 instances are great for workloads requiring large data sets in memory.
+    - General Purpose EC2 instances are significant for diverse workloads that require a balance between computing, memory, and network.
+    - Storage Optimized EC2 instances are great for workloads requiring high, sequential read/write access to large data sets on local storage.
+- Dedicated Hosts are suitable for companies with solid compliance needs or software with complicated licensing models. This is the most expensive EC2 Purchasing Option available.
+- Placement Groups
+    - Cluster—clusters instances into a low-latency group in a single Availability Zone - Same Rack and Same AZ
+        - Pros - Great network
+        - Cons - All will fail if the rack fails
+        - Use case
+            - Big data job
+            - An application that needs extremely low latency and high network throughput
+    - Spread—spreads instances across underlying hardware (max 7 instances per group per AZ)
+        - Different hardware
+        - Pros
+            - Can span across Availability Zones (AZ)
+            - Reduced risk is a simultaneous failure
+        - Cons
+            - Limited to 7 instances per AZ per placement group
+        - Use case:
+        • Application that needs to maximize high availability
+        • Critical Applications where each instance must be isolated from failure from each other
+    - Partition—spreads instances across many different partitions (which rely on different sets of racks) within an AZ. Scales to 100s of EC2 instances per group (Hadoop, Cassandra, Kafka)
+- ENI - Elastic Network Interface - Virtual Network card
+    - https://aws.amazon.com/blogs/aws/new-elastic-network-interfaces-in-the-virtual-private-cloud/
+- EC2 Storage
+    - EBS - Network USB stick
+        - Network Drive attaching
+        - Persist data even after terminating the instance
+        - Only one instance at a time
+        - bound to AZ
+        - Free tier - 30 GB of Gen Purpose or magnetic per month
+        - Not mandatory to attach to EC2 all the time
+        - By default root EBS is deleted
+            - “Delete on Termination” uncheck to save EBS while terminating the instance
+        - EBS Snapshot - backup of EBS
+            - Snapshot archive - 75% cheaper - 24 to 72 hours to restore
+            - Recycle bin - can be set
+                - fast snapshot restore -  costly
+        - Volume types
+            - gp2/3 - Boot volumes
+                - Cost-effective storage, low-latency
+                - System boot volumes, Virtual desktops, Development and test environments
+                - 1 GiB - 16 TiB
+            - io1/2 - high perf - boot volumes
+                - Critical business applications with sustained IOPS performance or applications that need more than 16,000 IOPS
+                - Great for databases workloads (sensitive to storage perf and consistency)
+                - Supports EBS Multi-attach
+                - 256,000 is the maximum IOPS you can achieve when you're using the EBS io2 Block Express volume type.
+            - st1 - low-cost HDD - throughput hdd
+                - Big Data, Data Warehouses, Log Processing
+            - sc1  - lowest HDD - Cold HDD
+                - Scenarios where the lowest cost is important
+            - Multi attach
+                - 16 ec2
+                - file system with cluster aware
+        - Encryption: encrypt an unencrypted EBS volume
+            - Create an EBS snapshot of the volume
+            - Encrypt the EBS snapshot ( using copy )
+            - Create new ebs volume from the snapshot ( the volume will also be
+            encrypted )
+            - Now you can attach the encrypted volume to the original instance
+- AMI - Amazon Machine Image
+    - Customization of EC2
+    - Faster boot because of pre-package
+    - AMIs are built for a specific AWS Region, they're unique for each AWS Region. You can't launch an EC2 instance using an AMI in another AWS Region, but you can copy the AMI to the target AWS Region and then use it to create your EC2 instances.
+- EC2 instance store
+    - faster than EBS - High performance with physical access to the server
+    - Lose their storage if stopped - ephemeral
+    - You can run a database on an EC2 instance that uses an Instance Store, but you'll have a problem that the data will be lost if the EC2 instance is stopped (it can be restarted without problems). One solution is that you can set up a replication mechanism on another EC2 instance with an Instance Store to have a standby copy. Another solution is to set up backup mechanisms for your data. It's all up to you how you want to set up your architecture to validate your requirements. In this use case, it's around IOPS, so we have to choose an EC2 Instance Store.
+- EFS - Managed NFS
+    - Many ec2 instances in different AZ
+- EC2 Hibernate
+    - Backed by root EBS volume - encrypted
+    - Instance ram size must be less than 150 GB
+    - limit of 60 days
+- Dedecated instances
+    - Single hardware across account
+- Dedicated host
+    - Access to hardware
+- By default max 20 instances per AZ and need to ask AWS to increase the limit
+- 
+
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/928a376d-cfec-4dc7-ad29-85b268e69740/Untitled.png)
+
+Amazon EC2 uses ECC memory.
+
+  VPC Flow Logs:
+    1. This log group will have log streams of all ENIs
